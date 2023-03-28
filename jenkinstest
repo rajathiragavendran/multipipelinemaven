@@ -1,0 +1,44 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('continuousdownload')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        git 'https://github.com/rajathiragavendran/maven1.git'
+                    }
+                    catch(Exception e1)
+                    {
+                        mail bcc: '', body: 'jenkins is unable to download the code from the remote git repository', cc: '', from: '', replyTo: '', subject: 'download failed', to: 'git.admin@gmail.com'
+                    
+                        exit(1)
+                    }
+                }
+            }
+        }
+        stage('continuousbuild')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        sh 'mvn package'
+                    }
+                    catch(Exception e2)
+                    {
+                        mail bcc: '', body: 'jenkins failed to download the maven package', cc: '', from: '', replyTo: '', subject: 'maven failed to download', to: 'git.maven@gmail.com'
+                        exit(1)
+                    }
+                }
+            }
+        }
+    }
+}
